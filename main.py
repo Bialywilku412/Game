@@ -1,9 +1,11 @@
 import time
+import random
 
 def delayPrint(text, delay=2):
     print(text)
     time.sleep(delay)
 
+# === Scenes ===
 def intro():
     darrow = "Darrow"
     delayPrint("Red Rising: A Text RPG\n", 2)
@@ -161,7 +163,142 @@ def transformationScene():
     delayPrint("You are Gold.\n")
 
     delayPrint("=== ACT 1 COMPLETE ===\n")
+    
+def arrivalScene():
+    delayPrint("\nYou fly across Mars - not as a Red, but reborn as a Gold.")
+    delayPrint("The shuttle lands. Before you lies a mountain fortress: the Institute.")
+    delayPrint("Golds in armor. Proctors in robes. Silent servants.")
+    delayPrint("you are among wolves now.\n")
+    
+def passageAnnouncementScene():
+    delayPrint("A Proctor floats above the crowd using gravBoots.")
+    delayPrint("\"Welcome, children of the Society,\" he says.")
+    delayPrint("\"Tonight, you face the Passage. You will be paired with another Gold.\"")
+    delayPrint("\"Survive, and you may earn a place among us. Fail, and you will die.\"")
+    delayPrint("\"Let the games begin.\"\n")
 
+def julianIntroScene():
+    delayPrint("The cell door opens with a hiss of air.")
+    delayPrint("A boy is thrown inside. Blonde. Soft-featured. About your age.\n")
+    delayPrint("He scrambles to his feet, dusts himself off, and looks at you.\n")
+
+    delayPrint("\"Well, this is awkward,\" he says, trying to smile.")
+    delayPrint("\"Julian Bellona,\" he offers, holding out a hand.")
+
+    choice = input("\nDo you:\n1. Shake his hand.\n2. Ignore him.\n> ")
+
+    if choice == "1":
+        delayPrint("\nYou shake it. His grip is soft. Too soft for this place.")
+        delayPrint("“Darrow,” you say quietly.")
+    elif choice == "2":
+        delayPrint("\nYou say nothing. His hand drops awkwardly.")
+        delayPrint("“Alright then,” he mumbles.")
+    else:
+        delayPrint("\nSilence. Julian just shrugs, trying to ease the tension.")
+
+    delayPrint("\nHe sits against the wall across from you.")
+    delayPrint("“They say we have to fight. But maybe… maybe they’re lying?”")
+    delayPrint("“Maybe they’re testing our mercy.”")
+    delayPrint("You want to believe him.")
+    delayPrint("But you know better.")
+
+# === Battle System ===
+def battle(player, enemy):
+    player_hp = player['hp']
+    quick_dmg = player['quickAttackDamage']
+    heavy_dmg = player['heavyAttackDamage']
+    
+    enemy_hp = enemy['hp']
+    enemy_attack = enemy['attackDamage']
+    enemy_name = enemy['name']
+    
+    delayPrint(f"\nThe fight begins: {player['name']} vs {enemy_name}!")
+
+    while enemy_hp > 0 and player_hp > 0:
+        delayPrint(f"\n{player['name']} HP: {player_hp} — {enemy_name} HP: {enemy_hp}")
+        choice = input("Choose your action:\n1. Quick attack\n2. Heavy attack\n3. Defend\n4. Hesitate\n> ")
+        
+        defending = False
+
+        if choice == "1":
+            dmg = random.randint(*player['quickAttackDamage'])
+            delayPrint(f"\nYou strike quickly at {enemy_name} for {dmg} damage!")
+            enemy_hp -= dmg
+        elif choice == "2":
+            dmg = random.randint(*player['heavyAttackDamage'])
+            delayPrint(f"\nYou swing hard at {enemy_name} for {dmg} damage!")
+            enemy_hp -= dmg
+        elif choice == "3":
+            delayPrint("\nYou raise your guard, bracing for impact.")
+            defending = True
+        elif choice == "4":
+            delayPrint("\nYou hesitate... doubt creeps in.")
+        else:
+            delayPrint("\nYou fumble, losing precious seconds!")
+        
+        if enemy_hp <= 0:
+            break
+
+        if defending:
+            dmg = random.randint(*enemy['attackDamage']) // 2
+            delayPrint(f"\n{enemy_name} attacks, but you block part of the damage!")
+        else:
+            dmg = random.randint(*enemy['attackDamage'])
+            delayPrint(f"\n{enemy_name} attacks fiercely!")
+            
+        player_hp -= dmg
+        delayPrint(f"You take {dmg} damage.")
+        
+    if player_hp <= 0:
+        delayPrint("\nYou have been defeated...")
+        return False
+    
+    delayPrint(f"\n{enemy_name} falls. You have survived.")
+    return True
+
+def passageFightScene():
+    delayPrint("\nA voice crackles through a hidden speaker.")
+    delayPrint("\"Begin. Only one of you may leave.\"\n")
+
+    delayPrint("Julian's eyes widen. \"Wait... what?\"")
+    delayPrint("He looks around for a weapon. There is none.")
+    delayPrint("Just stone walls. Just you. Just him.\n")
+
+    delayPrint("“They can’t mean this,” he whispers. “We’re not animals.”")
+    delayPrint("You say nothing. You know the truth.\n")
+
+    delayPrint("Julian backs into a corner, fists trembling.")
+    delayPrint("“Please,” he says. “We can fight someone else. We don’t have to—”\n")
+
+    delayPrint("But the door stays shut.\n")
+
+    player = {
+        'name': 'Darrow',
+        'hp': 100,
+        'quickAttackDamage': (10, 20),
+        'heavyAttackDamage': (20, 40)
+    }
+    
+    enemy = {
+        'name': 'Julian Bellona',
+        'hp': 60,
+        'attackDamage': (10, 15)
+    }
+    
+    result = battle(player, enemy)
+    
+    if result:
+        delayPrint("\nYou kneel over Julian's body. Tears mix with blood.")
+        delayPrint("He didn't deserve this. None of you did.")
+        delayPrint("But you remember Eo. And you live.\n")
+
+        delayPrint("The door opens. Light floods the cell.")
+        delayPrint("You're dragged out. They say nothing. No praise. No shame.")
+        delayPrint("Only silence.\n")
+        
+    return True
+
+# === Main ===
 def main():
     darrow = intro()
     gardenScene()
@@ -171,8 +308,12 @@ def main():
     burialScene()
     dancerScene()
     transformationScene()
-
     delayPrint(f"{darrow}, reborn, now walks among the enemy...\n")
+    arrivalScene()
+    passageAnnouncementScene()
+    julianIntroScene()
+    passageFightScene()
+
 
 if __name__ == "__main__":
     main()
