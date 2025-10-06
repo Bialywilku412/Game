@@ -313,6 +313,7 @@ def main():
     passageAnnouncementScene()
     julianIntroScene()
     passageFightScene()
+    delayPrint("\nTo be continues...\n")
 
 
 if __name__ == "__main__":
